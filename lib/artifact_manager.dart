@@ -1,13 +1,10 @@
-
 import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:layout/game.dart';
 
-
 import 'ArtifactModel.dart';
 import 'artifact.dart';
-
 
 class ArtifactManager extends Component with HasGameRef<JumpGame> {
   final List<ArtifactModel> _data = [];
@@ -15,78 +12,44 @@ class ArtifactManager extends Component with HasGameRef<JumpGame> {
   final List<ArtifactModel> artifactDataList = [];
   final Random _random = Random();
 
-  final Timer _timer = Timer(30, repeat: true);
+  final Timer _timer = Timer(2, repeat: true);
   int level = 0;
   late int index;
 
-
-
   ArtifactManager() {
-   // _timer.onTick = spawnRandomArtifact;
+    _timer.onTick = spawnRandomArtifact;
   }
 
-  /*void spawnRandomArtifact() {
-    levelArtifacts.clear();
-    artifactDataList.clear();
-
-
-    var randomIndex = _random.nextInt(_data.length);
-
-    //print('ARTDATA: ${_data.elementAt(randomIndex).imageFileName.toString()}');
-
-    final artifactData = _data.elementAt(randomIndex);
-    print('ARTDATA ${artifactData.altitude}');
-    final myArtifact = Artifact(artifactData);
-
-    myArtifact.anchor = Anchor.bottomLeft;
-    myArtifact.position = Vector2(
+  void spawnRandomArtifact() {
+    /*final randomIndex = _random.nextInt(_data.length);
+    final artifactData = _data.elementAt(randomIndex);*/
+    final artifact = Artifact(gameRef.images.fromCache('coin_ten'));
+    artifact.anchor = Anchor.center;
+    artifact.position = Vector2(
         gameRef.size.x + 32,
         gameRef.size.y - 1);
 
-    myArtifact.position.y = gameRef.size.y - 200;
-
-
-    myArtifact.size = artifactData.textureSize;
-    add(myArtifact);
-  }*/
+   // artifact.size = artifactData.textureSize;
+    gameRef.add(artifact);
+  }
 
   @override
   void onMount() {
-    /*shouldRemove = false;
-    level = box.read('level') ?? 1;
-    index = level - 1;
+    shouldRemove = false;
 
-    levelArtifacts = levelData.data[index].artifacts;
-    // print(levelArtifacts.toString());
-
-    for (int i = 0; i < levelArtifacts.length; i++) {
-      String artifactName = levelArtifacts[i];
-      var artifactIndex = artifactList.data.indexWhere((element) =>
-      element.name == artifactName);
-      var imageFileName = artifactList.data[artifactIndex].imageFileName;
-      var nFrames = artifactList.data[artifactIndex].nFrames;
-      var stepTime = artifactList.data[artifactIndex].stepTime;
-      var textureSize = artifactList.data[artifactIndex].textureSize;
-      var speedX = artifactList.data[artifactIndex].speedX;
-      var altitude = artifactList.data[artifactIndex].altitude;
-      //var image = artifactList.data[artifactIndex].image;
-
-      var newArtifact = ArtifactModel(
-          name: artifactName,
-          image: gameRef.images.fromCache(imageFileName),
-          nFrames: nFrames,
-          stepTime: stepTime,
-          textureSize: textureSize,
-          speedX: speedX,
-          altitude: altitude);
-
-      artifactDataList.add(newArtifact);
-      //print('ART Added**');
-
+    if (_data.isEmpty) {
+      _data.addAll([
+        ArtifactModel(
+            name: 'coin',
+            image: gameRef.images.fromCache('coin_ten.png'),
+            nFrames: 1,
+            stepTime: 0.1,
+            textureSize: Vector2(256, 256),
+            speedX: -180,
+            altitude: 200)
+      ]);
     }
 
-    _data.addAll(artifactDataList);
-    print('DL2: ${_data.length}');*/
     _timer.start();
     super.onMount();
   }

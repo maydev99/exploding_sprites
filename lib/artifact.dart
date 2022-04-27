@@ -7,28 +7,35 @@ import 'package:layout/game.dart';
 enum ArtAnimationStates {
   normal,
   explode,
+  explode2,
 }
 
 class Artifact extends SpriteAnimationGroupComponent
     with CollisionCallbacks, HasGameRef<JumpGame> {
   final Timer _hitTimer = Timer(0.4);
-  final Timer _coinReturnTimer = Timer(3);
+
+  //final Timer _coinReturnTimer = Timer(3);
   double ground = 0.0;
   bool isHit = false;
-  bool isCoinReturned  = true;
+
+  //bool isCoinReturned  = true;
   bool isCoinExploded = false;
 
   static final _animationMap = {
     ArtAnimationStates.normal: SpriteAnimationData.sequenced(
-        amount: 1, stepTime: 0.1, textureSize: Vector2(256, 256)),
+        amount: 1,
+        stepTime: 0.1,
+        textureSize: Vector2(256, 256)),
     ArtAnimationStates.explode: SpriteAnimationData.sequenced(
-        amount: 4, stepTime: 0.1, texturePosition: Vector2((3) * 256,0), textureSize: Vector2(256, 256), loop: true)
+        amount: 4,
+        stepTime: 0.1,
+        texturePosition: Vector2((3) * 256, 0),
+        textureSize: Vector2(256, 256),
+        loop: false
+    ),
   };
 
-  Artifact(Image image)
-  : super.fromFrameData(image, _animationMap);
-
-
+  Artifact(Image image) : super.fromFrameData(image, _animationMap);
 
   @override
   Future<void>? onLoad() async {
@@ -37,18 +44,18 @@ class Artifact extends SpriteAnimationGroupComponent
     anchor = Anchor.center;
     size = Vector2(128, 128);
     position = Vector2(gameRef.canvasSize.x / 2, gameRef.canvasSize.y / 2);
-
   }
 
   @override
   void onMount() {
+
+    current = ArtAnimationStates.normal;
+
     _hitTimer.onTick = () {
       //current = ArtAnimationStates.normal;
       isHit = false;
     };
-    _coinReturnTimer.onTick = () {
-      isCoinReturned = true;
-    };
+
     super.onMount();
   }
 
@@ -56,31 +63,27 @@ class Artifact extends SpriteAnimationGroupComponent
   void update(double dt) {
     super.update(dt);
 
-    if(!isHit) {
-      if(isCoinReturned) {
-        current =ArtAnimationStates.normal;
-      }
-    } else {
+    if(isHit) {
       current = ArtAnimationStates.explode;
+      isHit = false;
+
     }
+
+
 
     _hitTimer.update(dt);
   }
 
   void coinExplode() {
-    //current = ArtAnimationStates.explode;
     isHit = true;
     _hitTimer.start();
-    _coinReturnTimer.start();
-    /*if (isCoinExploded) {
-      current = ArtAnimationStates.normal;
-      isCoinExploded = false;
-    } else {
-
-      isCoinExploded = true;
-    }*/
 
 
+  }
+
+  @override
+  void onRemove() {
+    super.onRemove();
   }
 
   @override

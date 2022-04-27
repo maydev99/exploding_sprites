@@ -37,6 +37,10 @@ class JumpGame extends FlameGame with HasCollisionDetection, TapDetector {
     player.jump();
     artifact.coinExplode();
     _tapTimer.start();
+    Future.delayed(const Duration(milliseconds: 400)).then((_) => {
+      artifact.removeFromParent()
+    });
+
 
 
   }
