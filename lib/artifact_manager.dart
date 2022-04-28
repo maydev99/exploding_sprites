@@ -13,6 +13,7 @@ class ArtifactManager extends Component with HasGameRef<JumpGame> {
   final Timer _timer = Timer(2, repeat: true);
   late int index;
 
+
   ArtifactManager() {
     _timer.onTick = spawnRandomArtifact;
   }
@@ -24,7 +25,7 @@ class ArtifactManager extends Component with HasGameRef<JumpGame> {
     var randomIndex = _random.nextInt(_data.length);
 
     final artifactData = _data.elementAt(randomIndex);
-    final myArtifact = Artifact(artifactData);
+    final myArtifact = Artifact(artifactData, ArtStates.normal);
 
     myArtifact.anchor = Anchor.bottomLeft;
     myArtifact.position = Vector2(gameRef.size.x + 32, gameRef.size.y - 1);

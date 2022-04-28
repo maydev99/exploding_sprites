@@ -5,12 +5,23 @@ import 'package:layout/player.dart';
 import 'artifact_model.dart';
 import 'game.dart';
 
-class Artifact extends SpriteAnimationComponent with CollisionCallbacks, HasGameRef<JumpGame> {
+enum ArtStates {
+  normal,
+  hit,
+}
+
+class Artifact extends SpriteAnimationComponent
+    with CollisionCallbacks, HasGameRef<JumpGame> {
   late final ArtifactModel artifactModel;
   bool isHit = false;
   final Timer _hitTimer = Timer(1);
 
-  Artifact(this.artifactModel) {
+  static final animationMap = {
+    ArtStates.normal: SpriteAnimationData.sequenced(amount: 1, stepTime: 0.1, textureSize: Vector2(256,256)),
+    ArtStates.hit: SpriteAnimationData.sequenced(amount: 7, stepTime: 0.1, textureSize: Vector2(256,256), loop: true)
+  };
+
+  Artifact(this.artifactModel, _animationMap) {
     animation = SpriteAnimation.fromFrameData(
       artifactModel.image,
       SpriteAnimationData.sequenced(
@@ -21,15 +32,15 @@ class Artifact extends SpriteAnimationComponent with CollisionCallbacks, HasGame
   }
 
   @override
-  Future<void>? onLoad() async{
+  Future<void>? onLoad() async {
     await super.onLoad();
     add(RectangleHitbox());
   }
 
   @override
   void onMount() {
-
     _hitTimer.onTick = () {
+
       isHit = false;
     };
 
@@ -43,9 +54,7 @@ class Artifact extends SpriteAnimationComponent with CollisionCallbacks, HasGame
     position.x -= artifactModel.speedX * dt;
 
     if (position.x < -artifactModel.textureSize.x) {
-
       removeFromParent();
-
     }
 
     _hitTimer.update(dt);
@@ -55,8 +64,8 @@ class Artifact extends SpriteAnimationComponent with CollisionCallbacks, HasGame
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    if((other is PlayerComponent) && (!isHit)) {
-     hit();
+    if ((other is PlayerComponent) && (!isHit)) {
+      hit();
     }
 
     super.onCollision(intersectionPoints, other);
@@ -64,14 +73,13 @@ class Artifact extends SpriteAnimationComponent with CollisionCallbacks, HasGame
 
   @override
   void onCollisionEnd(PositionComponent other) {
-
     super.onCollisionEnd(other);
   }
 
   void hit() {
     isHit = true;
     _hitTimer.start();
-    if(isHit) {
+    if (isHit) {
       print('hit');
     }
   }
