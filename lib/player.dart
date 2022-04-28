@@ -1,3 +1,4 @@
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/flame.dart';
@@ -5,7 +6,7 @@ import 'package:flame/flame.dart';
 
 import 'game.dart';
 
-class PlayerComponent extends SpriteAnimationComponent with HasGameRef<JumpGame> {
+class PlayerComponent extends SpriteAnimationComponent with CollisionCallbacks, HasGameRef<JumpGame> {
   SpriteAnimationComponent peepAnimation = SpriteAnimationComponent();
   static Vector2 gravity = Vector2(0, 600);
   Vector2 velocity = Vector2.zero();
@@ -26,6 +27,7 @@ class PlayerComponent extends SpriteAnimationComponent with HasGameRef<JumpGame>
     playing = true;
     size = Vector2(128, 128);
     position = Vector2(gameRef.canvasSize.x / 8, ground);
+    add(RectangleHitbox());
 
   }
 
@@ -43,6 +45,18 @@ class PlayerComponent extends SpriteAnimationComponent with HasGameRef<JumpGame>
       isJumping = false;
     }
 
+  }
+
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    // TODO: implement onCollision
+    super.onCollision(intersectionPoints, other);
+  }
+
+  @override
+  void onCollisionEnd(PositionComponent other) {
+    // TODO: implement onCollisionEnd
+    super.onCollisionEnd(other);
   }
 
   void jump() {
