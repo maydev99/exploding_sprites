@@ -1,8 +1,7 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/extensions.dart';
 import 'package:flame/flame.dart';
-
+import 'package:layout/artifact.dart';
 
 import 'game.dart';
 
@@ -49,15 +48,14 @@ class PlayerComponent extends SpriteAnimationComponent with CollisionCallbacks, 
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    // TODO: implement onCollision
+    if(other is Artifact) {
+      Future.delayed(const Duration(milliseconds: 600)).then((_) {
+        other.removeFromParent();
+      });
+    }
     super.onCollision(intersectionPoints, other);
   }
 
-  @override
-  void onCollisionEnd(PositionComponent other) {
-    // TODO: implement onCollisionEnd
-    super.onCollisionEnd(other);
-  }
 
   void jump() {
     if(!isJumping) {
